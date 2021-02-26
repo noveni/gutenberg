@@ -84,10 +84,8 @@ jobs:
     steps:
       - name: Checkout code
         uses: actions/checkout@master
-
-      - name: Fetch version bump commit
-        if: github.event_name == 'workflow_dispatch'
-        run: git pull origin ${{ github.ref }}
+        with:
+          ref: ${{ needs.bump-version.outputs.release_branch }} || ${{ github.ref }}
 
       - name: Cache node modules
         uses: actions/cache@v2
