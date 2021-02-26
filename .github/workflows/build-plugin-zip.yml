@@ -85,7 +85,7 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@master
         with:
-          ref: ${{ needs.bump-version.outputs.release_branch }} || ${{ github.ref }}
+          ref: ${{ needs.bump-version.outputs.release_branch || github.ref }}
 
       - name: Cache node modules
         uses: actions/cache@v2
