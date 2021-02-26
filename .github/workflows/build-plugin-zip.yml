@@ -76,6 +76,18 @@ jobs:
             git commit -m "Bump plugin version to ${{ steps.get_version.outputs.new_version }}"
             git push --set-upstream origin "${{ steps.get_version.outputs.release_branch }}"
 
+      - name: Cherry-pick to master
+        if: github.ref != 'master'
+        run: |
+          git fetch origin master
+          git checkout master
+          MASTER_VERSION=$(jq --raw-output '.version' package.json)
+          if [[ ${{ steps.get_version.outputs.old_version }} == "$MASTER_VERSION" ]]; then
+            git cherry-pick "${{ steps.get_version.outputs.release_branch }}"
+            git push
+          fi
+
+
   build:
     name: Build Release Artifact
     runs-on: ubuntu-latest
