@@ -79,7 +79,7 @@ jobs:
       - name: Cherry-pick to master
         if: github.ref != 'master'
         run: |
-          git fetch origin master
+          git fetch --depth=1 origin master
           git checkout master
           MASTER_VERSION=$(jq --raw-output '.version' package.json)
           if [[ ${{ steps.get_version.outputs.old_version }} == "$MASTER_VERSION" ]]; then
