@@ -58,7 +58,7 @@ jobs:
           echo "::set-output name=release_branch::$(echo $RELEASE_BRANCH)"
 
       - name: Create release branch
-        if: ${{ github.event.inputs.version }} == 'rc' && ! contains( steps.get_version.outputs.old_version, 'rc' )
+        if: ${{ github.event.inputs.version == 'rc' && ! contains( steps.get_version.outputs.old_version, 'rc' ) }}
         run: git checkout -b "${{ steps.get_version.outputs.release_branch }}"
 
       - name: Update plugin version
