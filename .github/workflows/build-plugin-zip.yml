@@ -22,9 +22,15 @@ jobs:
     outputs:
       old_version: ${{ steps.get_version.outputs.old_version }}
       new_version: ${{ steps.get_version.outputs.new_version }}
+      release_branch: ${{ steps.get_version.outputs.release_branch }}
     steps:
       - name: Checkout code
         uses: actions/checkout@master
+
+      - name: Configure git user name and email
+        run: |
+            git config user.name "Gutenberg Repository Automation"
+            git config user.email gutenberg@wordpress.org
 
       - name: Compute old and new version
         id: get_version
@@ -47,6 +53,13 @@ jobs:
             fi
           fi
           echo "::set-output name=new_version::$(echo $NEW_VERSION)"
+          IFS='.' read -r -a NEW_VERSION_ARRAY <<< "$NEW_VERSION"
+          RELEASE_BRANCH="release/${NEW_VERSION_ARRAY[0]}.${NEW_VERSION_ARRAY[1]}"
+          echo "::set-output name=release_branch::$(echo $RELEASE_BRANCH)"
+
+      - name: Create release branch
+        if: ${{ github.event.inputs.version }} == 'rc' && ! contains( steps.get_version.outputs.old_version, 'rc' )
+        run: git checkout -b "RELEASE_BRANCH"
 
       - name: Update plugin version
         env:
@@ -59,8 +72,6 @@ jobs:
 
       - name: Commit the version bump
         run: |
-            git config user.name "Gutenberg Repository Automation"
-            git config user.email gutenberg@wordpress.org
             git add gutenberg.php package.json package-lock.json readme.txt
             git commit -m "Bump plugin version to ${{ steps.get_version.outputs.new_version }}"
             git push
