@@ -74,7 +74,7 @@ jobs:
         run: |
             git add gutenberg.php package.json package-lock.json readme.txt
             git commit -m "Bump plugin version to ${{ steps.get_version.outputs.new_version }}"
-            git push
+            git push --set-upstream origin "${{ steps.get_version.outputs.release_branch }}"
 
   build:
     name: Build Release Artifact
