@@ -11,7 +11,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Plugin version to release (must start with a "v")'
+        description: 'rc or stable?'
         required: true
 
 jobs:
