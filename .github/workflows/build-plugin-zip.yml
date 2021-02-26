@@ -37,7 +37,7 @@ jobs:
         run: |
           OLD_VERSION=$(jq --raw-output '.version' package.json)
           echo "::set-output name=old_version::$(echo $OLD_VERSION)"
-          if [ ${{ github.event.inputs.version }} == 'stable' ]; then
+          if [[ ${{ github.event.inputs.version }} == 'stable' ]]; then
             NEW_VERSION=$(npx semver $OLD_VERSION -i patch)
           else
             if [[ $OLD_VERSION == *"rc"* ]]; then
