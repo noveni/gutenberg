@@ -6,6 +6,7 @@ import {
 	MenuItemsChoice,
 	Card,
 	CardBody,
+	NavigableMenu,
 } from '@wordpress/components';
 import { __ } from '@wordpress/i18n';
 
@@ -16,7 +17,7 @@ export default function MenuSelector( { onSelectMenu, menus } ) {
 				<h3 className="edit-navigation-menu-selector__header">
 					{ __( 'Choose a menu to edit: ' ) }
 				</h3>
-				<div className="edit-navigation-menu-selector__body">
+				<NavigableMenu className="edit-navigation-menu-selector__body">
 					<MenuGroup>
 						<MenuItemsChoice
 							onSelect={ onSelectMenu }
@@ -26,7 +27,7 @@ export default function MenuSelector( { onSelectMenu, menus } ) {
 							} ) ) }
 						/>
 					</MenuGroup>
-				</div>
+				</NavigableMenu>
 			</CardBody>
 		</Card>
 	);
