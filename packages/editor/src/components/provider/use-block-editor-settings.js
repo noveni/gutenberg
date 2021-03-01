@@ -185,6 +185,7 @@ function useBlockEditorSettings( settings, hasTemplate ) {
 				'template',
 				'templateLock',
 				'titlePlaceholder',
+				'supportsLayout',
 			] ),
 			mediaUpload: hasUploadPermissions ? mediaUpload : undefined,
 			__experimentalReusableBlocks: reusableBlocks,
