@@ -42,6 +42,7 @@ import GlobalStylesProvider from './global-styles-provider';
 import NavigationSidebar from '../navigation-sidebar';
 import URLQueryController from '../url-query-controller';
 import { store as editSiteStore } from '../../store';
+import { usePreParsePatterns } from './pre-parse-patterns';
 
 const interfaceLabels = {
 	secondarySidebar: __( 'Block Library' ),
@@ -71,10 +72,6 @@ function Editor( { initialSettings } ) {
 		} = select( editSiteStore );
 		const postType = getEditedPostType();
 		const postId = getEditedPostId();
-
-		// Prefetch and parse patterns. This ensures patterns are loaded and parsed when
-		// the editor is loaded rather than degrading the performance of the inserter.
-		select( 'core/block-editor' ).__experimentalGetAllowedPatterns();
 
 		// The currently selected entity to display. Typically template or template part.
 		return {
@@ -160,6 +157,7 @@ function Editor( { initialSettings } ) {
 	const [ inserterDialogRef, inserterDialogProps ] = useDialog( {
 		onClose: () => setIsInserterOpened( false ),
 	} );
+	usePreParsePatterns();
 
 	// Don't render the Editor until the settings are set and loaded
 	if ( ! settings?.siteUrl ) {
