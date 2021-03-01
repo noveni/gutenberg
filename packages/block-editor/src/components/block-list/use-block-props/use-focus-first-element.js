@@ -6,7 +6,7 @@ import { first, last } from 'lodash';
 /**
  * WordPress dependencies
  */
-import { useEffect } from '@wordpress/element';
+import { useRefEffect } from '@wordpress/compose';
 import { focus, isTextField, placeCaretAtHorizontalEdge } from '@wordpress/dom';
 import { useSelect } from '@wordpress/data';
 
@@ -15,8 +15,6 @@ import { useSelect } from '@wordpress/data';
  */
 import { isInsideRootBlock } from '../../../utils/dom';
 import { store as blockEditorStore } from '../../../store';
-
-/** @typedef {import('@wordpress/element').RefObject} RefObject */
 
 /**
  * Returns the initial position if the block needs to be focussed, `undefined`
@@ -55,45 +53,47 @@ function useInitialPosition( clientId ) {
  * Transitions focus to the block or inner tabbable when the block becomes
  * selected and an initial position is set.
  *
- * @param {RefObject} ref      React ref with the block element.
  * @param {string}    clientId Block client ID.
  */
-export function useFocusFirstElement( ref, clientId ) {
+export function useFocusFirstElement( clientId ) {
 	const initialPosition = useInitialPosition( clientId );
 
-	useEffect( () => {
-		if ( initialPosition === undefined || initialPosition === null ) {
-			return;
-		}
+	return useRefEffect(
+		( wrapper ) => {
+			if ( initialPosition === undefined || initialPosition === null ) {
+				return;
+			}
 
-		const { ownerDocument } = ref.current;
+			const { ownerDocument } = wrapper;
 
-		// Focus is captured by the wrapper node, so while focus transition
-		// should only consider tabbables within editable display, since it
-		// may be the wrapper itself or a side control which triggered the
-		// focus event, don't unnecessary transition to an inner tabbable.
-		if (
-			ownerDocument.activeElement &&
-			isInsideRootBlock( ref.current, ownerDocument.activeElement )
-		) {
-			return;
-		}
+			// Focus is captured by the wrapper node, so while focus transition
+			// should only consider tabbables within editable display, since it
+			// may be the wrapper itself or a side control which triggered the
+			// focus event, don't unnecessary transition to an inner tabbable.
+			if (
+				ownerDocument.activeElement &&
+				isInsideRootBlock( wrapper, ownerDocument.activeElement )
+			) {
+				return;
+			}
 
-		// Find all tabbables within node.
-		const textInputs = focus.tabbable.find( ref.current ).filter(
-			( node ) =>
-				isTextField( node ) &&
-				// Exclude inner blocks and block appenders
-				isInsideRootBlock( ref.current, node ) &&
-				! node.closest( '.block-list-appender' )
-		);
+			// Find all tabbables within node.
+			const textInputs = focus.tabbable.find( wrapper ).filter(
+				( node ) =>
+					isTextField( node ) &&
+					// Exclude inner blocks and block appenders
+					isInsideRootBlock( wrapper, node ) &&
+					! node.closest( '.block-list-appender' )
+			);
 
-		// If reversed (e.g. merge via backspace), use the last in the set of
-		// tabbables.
-		const isReverse = -1 === initialPosition;
-		const target =
-			( isReverse ? last : first )( textInputs ) || ref.current;
+			// If reversed (e.g. merge via backspace), use the last in the set of
+			// tabbables.
+			const isReverse = -1 === initialPosition;
+			const target =
+				( isReverse ? last : first )( textInputs ) || wrapper;
 
-		placeCaretAtHorizontalEdge( target, isReverse );
-	}, [ initialPosition ] );
+			placeCaretAtHorizontalEdge( target, isReverse );
+		},
+		[ initialPosition ]
+	);
 }
