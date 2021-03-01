@@ -9,16 +9,10 @@
 		},
 		"templateLock": {
 			"type": "string"
-		},
-		"layout": {
-			"type": "object"
-		}
+		
 	},
 	"supports": {
-		"align": [
-			"wide",
-			"full"
-		],
+		"align": [ "wide", "full" ],
 		"anchor": true,
 		"html": false,
 		"color": {
@@ -30,7 +24,8 @@
 		},
 		"__experimentalBorder": {
 			"radius": true
-		}
+		},
+		"__experimentalLayout": true
 	},
 	"editorStyle": "wp-block-group-editor",
 	"style": "wp-block-group"
